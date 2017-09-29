@@ -41,6 +41,10 @@ For this assignment, the total number of requests are no_of_threads\*no_of_itera
 Further, an error is reported if any of the requests are unsuccessful.
 
 ## Decision of not using Go's default http library
+Initially, Go's default http library was used. For the test runs, latencies
+with this library were slower or on par Java implementations of some students.
+Several third party http libraries are available for Go, and I tried to test them.
+
 For my tests, and even for production use, fasthttp library for Go is faster than Go's default library. Why this is the case and what the trade-offs are is explained [here](https://stackoverflow.com/questions/41627931/in-golang-packages-why-is-fasthttp-faster-than-net-http):
 
 ## Stress tests and breaking things
