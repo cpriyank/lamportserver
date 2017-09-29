@@ -1,0 +1,1 @@
+All threads took in total: 111.409487233
