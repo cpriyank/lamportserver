@@ -21,16 +21,29 @@ Wherever possible, comments are added in client.go file to make things clear.
 
 ## Reported statistics and conspicuous absence of two of them:
 All results are `echo`ed into files inside results directory.
-Some statistics are included in the table.
+Some statistics are included in the table:
 | Description        | Value           |
 | ------------- |:-------------:|
 | Wall time      | 0.0103 s |
 | Requests sent      | threads\* iterations|
 | Successfull requests       | threads\* iterations|
-| Mean latency | |
-| Median latency | |
-| 95 percentile latency | |
-| 99 percentile latency | |
+| Mean latency | GET: 3.94111e-06 s POST: 6.32324e-06 s|
+| Median latency | GET: 0.000002 s POST: 0.000003 s |
+| 95 percentile latency | GET: 0.000005 s POST: 0.000007 s |
+| 99 percentile latency | GET: 0.000022 s POST: 0.000024  s|
+
+Percentiles, means, and medians have been counted via Unix coreutils like so:
+```bash
+❯ cat aws-fin-100-100.txt | sort -rk1 | sed '100q;d'
+GET: 0.000022 POST: 0.000024
+
+❯ awk '{ total += $2 } END { print total/NR }' aws-fin-100-100.txt
+3.94111e-06
+
+❯ awk '{ total += $4 } END { print total/NR }' aws-fin-100-100.txt
+6.32324e-06
+```
+Awk one liners are due to [this](https://stackoverflow.com/questions/3122442/how-do-i-calculate-the-mean-of-a-column)
 
 Total requests sent and total successful requests are not reported because _they are guaranteed if the program finishes execution normally_.
 
@@ -63,7 +76,4 @@ As you see in the prompt in the screenshot, the previous command took 3 minutes 
 16 seconds to execute. It utilized 1 million concurrent requests for 100 iterations.
 
 If 10 million requests are completed within half an hour, they will be reported before
-deadline.
-
-Of course, these experimental requests are sent to localhost as AWS might charge if one makes so many requests at once.
-
+deadline. (Edit They couldn't get completed. They made the 64 GB RAM, 512 GB SSD desktop run out of memory.)
