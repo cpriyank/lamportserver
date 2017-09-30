@@ -29,7 +29,8 @@ achieve 1000 times speedup over my previous Go code.
 
 ## Reported statistics and conspicuous absence of two of them:
 All results are `echo`ed into files inside results directory.
-Some statistics are included in the table:
+Some statistics are included in the table for 100 threads and 100 iterations
+for a server on an EC2 instance:
 
 | Description           | Value                                  |
 | :-------------:       | :-------------:                        |
