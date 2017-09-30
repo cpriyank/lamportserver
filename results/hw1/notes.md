@@ -30,15 +30,16 @@ achieve 1000 times speedup over my previous Go code.
 ## Reported statistics and conspicuous absence of two of them:
 All results are `echo`ed into files inside results directory.
 Some statistics are included in the table:
-| Description        | Value           |
-| ------------- |:-------------:|
-| Wall time      | 0.0103 s |
-| Requests sent      | threads\* iterations|
-| Successfull requests       | threads\* iterations|
-| Mean latency | GET: 3.94111e-06 s POST: 6.32324e-06 s|
-| Median latency | GET: 0.000002 s POST: 0.000003 s |
-| 95 percentile latency | GET: 0.000005 s POST: 0.000007 s |
-| 99 percentile latency | GET: 0.000022 s POST: 0.000024  s|
+
+| Description           | Value                                  |
+| :-------------:       | :-------------:                        |
+| Wall time             | 0.0103 s                               |
+| Requests sent         | threads\* iterations                   |
+| Successfull requests  | threads\* iterations                   |
+| Mean latency          | GET: 3.94111e-06 s POST: 6.32324e-06 s |
+| Median latency        | GET: 0.000002 s POST: 0.000003 s       |
+| 95 percentile latency | GET: 0.000005 s POST: 0.000007 s       |
+| 99 percentile latency | GET: 0.000022 s POST: 0.000024  s      |
 
 Percentiles, means, and medians have been counted via Unix coreutils like so:
 ```bash
