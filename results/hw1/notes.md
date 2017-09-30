@@ -80,12 +80,10 @@ Every OS has some default value of number of files that can be open at any time.
 
 Fortunately, this default value can be changed. Even better, Go's fastHttp library has a different implementation which avoids this issue altogether (I still need to understand how).
 
-If that library is used, creating 10 million goroutines (10 million concurrent GET and POST requests for 100 iterations) is easy on a 64 GB machine, like so :
-
-As you see in the prompt in the screenshot, the previous command took 3 minutes and
-16 seconds to execute. It utilized 1 million concurrent requests for 100 iterations.
+If that library is used, creating a million goroutines (1 million concurrent GET and POST requests for 100 iterations) is easy on a 64 GB machine. Results of such
+experiments are redirected to `txt` files in results/hw1 directory of this repo.
 
 If 10 million requests are completed within half an hour, they will be reported before
-deadline. (Edit They couldn't get completed. They made the 64 GB RAM, 512 GB SSD desktop run out of memory. Screenshots of such breakdowns are in hw1 folder of this repo.)
+deadline. (Edit: They couldn't get completed. They made the 64 GB RAM, 512 GB SSD desktop run out of memory. Screenshots of such breakdowns are in results/hw1 directory of this repo.)
 
 The fact that server stayed alive after so many requests seems a bit unreasonable to me even when I am using Go. I will read about why Go is so effective in such cases to reason about this.
