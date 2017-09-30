@@ -86,4 +86,4 @@ As you see in the prompt in the screenshot, the previous command took 3 minutes 
 If 10 million requests are completed within half an hour, they will be reported before
 deadline. (Edit They couldn't get completed. They made the 64 GB RAM, 512 GB SSD desktop run out of memory. Screenshots of such breakdowns are in hw1 folder of this repo.)
 
-The fact that server stayed alive after so many requests seems a bit unreasonable to me even when I am using Go.
+The fact that server stayed alive after so many requests seems a bit unreasonable to me even when I am using Go. I will read about why Go is so effective in such cases to reason about this.
