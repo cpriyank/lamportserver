@@ -42,7 +42,7 @@ func makeRequest(url string, result chan<- string) {
 	postSecs := time.Since(start).Seconds()
 
 	// Assign the time taken by requests in a channel passed to this goroutine.
-	result <- fmt.Sprintf("GET: %f POST: %f, at %v", getSecs, postSecs, time.Now().String())
+	result <- fmt.Sprintf("GET: %f POST: %f", getSecs, postSecs)
 }
 
 // MakeRequestHelper iteratively makes requests to the URI for specified number
