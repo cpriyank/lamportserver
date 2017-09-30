@@ -4,7 +4,7 @@ Go concurrency model is based on Tony Hoare's [CSP](https://en.wikipedia.org/wik
 In Go, Goroutines are lightweight counterparts of threads. They can be started by prepending a function call with `go` statement.
 
 `go foo()` starts a new goroutine. If you can spare about half an hour, do have
-a look at how they work and play with the code at [Tour of Go](https://tour.golang.org/concurrency/1)
+a look at how they work and play with the code at [Tour of Go](https://tour.golang.org/concurrency/1).
 
 For this assignment, I've used the terms "thread" and "goroutine" interchangeably to imply concurrent execution.
 
@@ -18,6 +18,14 @@ The difference between goroutines and threads in terms of memory consumption, co
 
 ### Reading Go code
 Wherever possible, comments are added in client.go file to make things clear.
+
+## Speed of Go vs Java
+For 100 concurrent requests for 100 iterations, my primary results were comparable
+to Java results of some friends.
+
+Go was not inherently faster out of the box for my program. The use
+of optimized http library and a powerful Desktop with 64 GB RAM have helped me
+achieve 1000 times speedup over my previous Go code.
 
 ## Reported statistics and conspicuous absence of two of them:
 All results are `echo`ed into files inside results directory.
@@ -43,7 +51,7 @@ GET: 0.000022 POST: 0.000024
 ❯ awk '{ total += $4 } END { print total/NR }' aws-fin-100-100.txt
 6.32324e-06
 ```
-Awk one liners are due to [this](https://stackoverflow.com/questions/3122442/how-do-i-calculate-the-mean-of-a-column)
+Awk one liners are due to [this](https://stackoverflow.com/questions/3122442/how-do-i-calculate-the-mean-of-a-column).
 
 Total requests sent and total successful requests are not reported because _they are guaranteed if the program finishes execution normally_.
 
@@ -76,4 +84,6 @@ As you see in the prompt in the screenshot, the previous command took 3 minutes 
 16 seconds to execute. It utilized 1 million concurrent requests for 100 iterations.
 
 If 10 million requests are completed within half an hour, they will be reported before
-deadline. (Edit They couldn't get completed. They made the 64 GB RAM, 512 GB SSD desktop run out of memory.)
+deadline. (Edit They couldn't get completed. They made the 64 GB RAM, 512 GB SSD desktop run out of memory. Screenshots of such breakdowns are in hw1 folder of this repo.)
+
+The fact that server stayed alive after so many requests seems a bit unreasonable to me even when I am using Go.
