@@ -8,6 +8,9 @@ import (
 	"time"
 )
 
+// Function makeRequest makes an http GET and POST requests to a URI, and
+// reports errors if any. Then, it saves the response time of each of the calls
+// in a channel (call it "a synchronized variable called result")
 func makeRequest(url string, result chan<- string) {
 	start := time.Now()
 	statusCode, body, err := fasthttp.Get(nil, url)
@@ -38,9 +41,12 @@ func makeRequest(url string, result chan<- string) {
 	}
 	postSecs := time.Since(start).Seconds()
 
+	// Assign the time taken by requests in a channel passed to this goroutine.
 	result <- fmt.Sprintf("GET: %f POST: %f, at %v", getSecs, postSecs, time.Now().String())
 }
 
+// MakeRequestHelper iteratively makes requests to the URI for specified number
+// of iterations.
 func MakeRequestHelper(url string, result chan<- string, iterations int) {
 	for i := 0; i < iterations; i++ {
 		makeRequest(url, result)
@@ -49,37 +55,63 @@ func MakeRequestHelper(url string, result chan<- string, iterations int) {
 
 func main() {
 	args := os.Args[1:]
-	threadString := args[0]
-	iterationString := args[1]
-	url := args[2]
-	bufferString := args[4]
-	portString := args[3]
-	// port
-	threads, err := strconv.Atoi(threadString)
-	if err != nil {
-		fmt.Printf("%v", err)
+	// default args
+	threads := 100
+	iterations := 100
+	portString := "8000"
+	url := "http://localhost" // Not giving AWS url to prevent DDOS.
+	buffers := 1
+
+	// parse the arguments. Assuming user will pass all 5 args
+	// or none at all
+	if len(args) != 0 {
+		threadString := args[0]
+		iterationString := args[1]
+		url = args[2]
+		bufferString := args[4]
+		portString = args[3]
+
+		threadsInt, err := strconv.Atoi(threadString)
+		threads = threadsInt
+		if err != nil {
+			fmt.Printf("%v", err)
+		}
+		iterations, err = strconv.Atoi(iterationString)
+		if err != nil {
+			fmt.Printf("%v", err)
+		}
+		// I have additional argument which is the length of buffer
+		// in go channel (Go concept. Read more here on it on Tour of Go), however,
+		// after running a few tests, I didn't notice any difference in latencies
+		// whether I use buffered channel or not.
+		buffers, err = strconv.Atoi(bufferString)
+		if err != nil {
+			fmt.Printf("%v", err)
+		}
+
 	}
-	iterations, err := strconv.Atoi(iterationString)
-	if err != nil {
-		fmt.Printf("%v", err)
-	}
-	buffers, err := strconv.Atoi(bufferString)
-	if err != nil {
-		fmt.Printf("%v", err)
-	}
-	// port, err := strconv.Atoi(portString)
-	// if err != nil {
-	// fmt.Printf("%v", err)
-	// }
+
 	url = fmt.Sprintf("%s:%s", url, portString)
-	buffers = 1
+
+	// result channel is the safe and only way for threads to communicate
+	// with each other in this program.
 	result := make(chan string, buffers)
 	resultSlice := make([]string, threads*iterations)
 	start := time.Now()
+
 	for i := 0; i < threads; i++ {
+		// go statement calls the function that succeeds in a background.
+		// It's like running a process in background in a Unix shell.
+		// An example: https://tour.golang.org/concurrency/1
 		go MakeRequestHelper(url, result, iterations)
 	}
+
 	for i := 0; i < threads*iterations; i++ {
+		// as the results arrive, save them in an array. Note that
+		// reading from result channel blocks until it has a non empty
+		// value. By running this for loop threads * iterations times,
+		// it is guaranteed that execution will only proceed if/when
+		// all the call results complete
 		resultSlice[i] = <-result
 	}
 	fmt.Println("All threads took in total:", time.Since(start).Seconds())
