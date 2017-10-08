@@ -7,15 +7,10 @@ import (
 	"log"
 )
 
-// Index is the index handler
-func Index(ctx *fasthttp.RequestCtx) {
-	fmt.Fprint(ctx, "Welcome!\n")
-}
-
-// Hello is the Hello handler
-func Hello(ctx *fasthttp.RequestCtx) {
-	fmt.Fprintf(ctx, "hello, %s!\n", ctx.UserValue("name"))
-}
+const (
+	concurrency = 100
+	numStats    = 999
+)
 
 // MultiParams is the multi params handler
 func vertStats(ctx *fasthttp.RequestCtx) {
@@ -31,17 +26,20 @@ func vertStats(ctx *fasthttp.RequestCtx) {
 // }
 
 // MultiParams is the multi params handler
-func loadStats(ctx *fasthttp.RequestCtx) {
-	fmt.Fprintf(ctx, "hi, %s, %s %s %s %s!\n", ctx.UserValue("resortID"), ctx.UserValue("dayNum"), ctx.UserValue("skierID"), ctx.UserValue("liftID"), ctx.UserValue("timeStamp"))
+func loadStats(ctx *fasthttp.RequestCtx, incoming chan<- *skierStat) {
+	// fmt.Fprintf(ctx, "hi, %s, %s %s %s %s!\n", ctx.UserValue("resortID"), ctx.UserValue("dayNum"), ctx.UserValue("skierID"), ctx.UserValue("liftID"), ctx.UserValue("timeStamp"))
+	fmt.Fprintf(ctx, "hi")
+	incoming := &skierStat{resortID: ctx.UserValue("resortID"), dayNum: ctx.UserValue("dayNum"), skierID: ctx.UserValue("skierID"), liftID: ctx.UserValue("liftID"), timeStamp: ctx.UserValue("timeStamp")}
+	incoming.load()
 }
 
 func Serve() {
 	router := fasthttprouter.New()
-	router.GET("/", Index)
-	router.GET("/foo/:name", Hello)
 	router.GET("/myvert/:skierID/:dayNum", vertStats)
 	router.POST("/load/:resortID/:dayNum/:skierID/:liftID/:timeStamp", loadStats)
 	// router.POST("/load", QueryArgs)
-
+	go func() {
+		writeUsingStatChan()
+	}()
 	log.Fatal(fasthttp.ListenAndServe(":8000", router.Handler))
 }
