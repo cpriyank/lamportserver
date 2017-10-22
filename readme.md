@@ -1,4 +1,4 @@
-## BSDS Assignments
+## Lamport Server
 [Helpful notes](https://gitlab.com/pronoid/lamport/blob/master/results/hw1/notes.md)
 are in markdown file in results directory. Do read them if you are reading go
 code for the first time.
