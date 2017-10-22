@@ -26,7 +26,7 @@ func vertStats(ctx *fasthttp.RequestCtx) {
 // }
 
 // MultiParams is the multi params handler
-func loadStats(ctx *fasthttp.RequestCtx, incoming chan<- *skierStat) {
+func loadStats(ctx *fasthttp.RequestCtx) {
 	// fmt.Fprintf(ctx, "hi, %s, %s %s %s %s!\n", ctx.UserValue("resortID"), ctx.UserValue("dayNum"), ctx.UserValue("skierID"), ctx.UserValue("liftID"), ctx.UserValue("timeStamp"))
 	fmt.Fprintf(ctx, "hi")
 	incoming := &skierStat{resortID: ctx.UserValue("resortID"), dayNum: ctx.UserValue("dayNum"), skierID: ctx.UserValue("skierID"), liftID: ctx.UserValue("liftID"), timeStamp: ctx.UserValue("timeStamp")}

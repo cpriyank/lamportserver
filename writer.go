@@ -1,18 +1,18 @@
 package lamportserver
 
-import (
-	"github.com/gocql/gocql"
-)
+// import (
+// 	"github.com/gocql/gocql"
+// )
 
 type skierStat struct {
-	resortID  int
-	dayNum    int
-	skierID   int
-	liftID    int
-	timeStamp int
+	resortID  interface{}
+	dayNum    interface{}
+	skierID   interface{}
+	liftID    interface{}
+	timeStamp interface{}
 }
 
-var statCache []*skierStat = make([]*skierStat, numStats)
+var statCache = make([]*skierStat, numStats)
 var statChan = make(chan *skierStat, concurrency)
 
 func writeUsingStatChan() {
