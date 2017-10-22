@@ -5,6 +5,7 @@ import (
 	"github.com/buaazp/fasthttprouter"
 	"github.com/valyala/fasthttp"
 	"log"
+	"os"
 )
 
 const (
@@ -29,8 +30,14 @@ func vertStats(ctx *fasthttp.RequestCtx) {
 func loadStats(ctx *fasthttp.RequestCtx) {
 	// fmt.Fprintf(ctx, "hi, %s, %s %s %s %s!\n", ctx.UserValue("resortID"), ctx.UserValue("dayNum"), ctx.UserValue("skierID"), ctx.UserValue("liftID"), ctx.UserValue("timeStamp"))
 	fmt.Fprintf(ctx, "hi")
-	incoming := &skierStat{resortID: ctx.UserValue("resortID"), dayNum: ctx.UserValue("dayNum"), skierID: ctx.UserValue("skierID"), liftID: ctx.UserValue("liftID"), timeStamp: ctx.UserValue("timeStamp")}
-	incoming.load()
+	stat, err := parse(ctx)
+	go func() {
+		// fmt.Println(stat)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "%v", err)
+		}
+		stat.load()
+	}()
 }
 
 func Serve() {
