@@ -1,7 +1,8 @@
 package lamportserver
 
-import (
-	"fmt"
+const (
+	numStats    = 800000
+	concurrency = 100
 )
 
 type skierStat struct {
@@ -19,9 +20,11 @@ func writeUsingStatChan() {
 	for i := 0; i < numStats; i++ {
 		statCache[i] = <-statChan
 	}
-	for _, stat := range statCache {
-		fmt.Println(stat)
-	}
+	// for i, stat := range statCache {
+	// 	fmt.Println(i, stat)
+	// }
+
+	// mapSkierToDaysToLiftID(statCache)
 
 }
 

@@ -8,11 +8,6 @@ import (
 	"os"
 )
 
-const (
-	concurrency = 100
-	numStats    = 999
-)
-
 // MultiParams is the multi params handler
 func vertStats(ctx *fasthttp.RequestCtx) {
 	fmt.Fprintf(ctx, "hi, %s, %s!\n", ctx.UserValue("skierID"), ctx.UserValue("dayNum"))
