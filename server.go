@@ -40,8 +40,7 @@ func Serve() {
 	router.GET("/myvert/:skierID/:dayNum", vertStats)
 	router.POST("/load/:resortID/:dayNum/:skierID/:liftID/:timeStamp", loadStats)
 	// router.POST("/load", QueryArgs)
-	go func() {
-		writeUsingStatChan()
-	}()
+	go writeUsingStatChan()
+
 	log.Fatal(fasthttp.ListenAndServe(":8000", router.Handler))
 }

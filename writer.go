@@ -1,30 +1,30 @@
 package lamportserver
 
-const (
-	numStats    = 800000
-	concurrency = 100
+import (
+	"fmt"
+	"time"
 )
 
-type skierStat struct {
-	resortID  int
-	dayNum    int
-	skierID   int
-	liftID    int
-	timeStamp int
-}
+const (
+	numStats       = 800000
+	concurrency    = 100
+	dbConnPoolSize = 100
+)
 
 var statCache = make([]*skierStat, numStats)
 var statChan = make(chan *skierStat, concurrency)
 
 func writeUsingStatChan() {
+	start := time.Now()
 	for i := 0; i < numStats; i++ {
 		statCache[i] = <-statChan
 	}
 	// for i, stat := range statCache {
-	// 	fmt.Println(i, stat)
+	fmt.Println("took", time.Since(start))
 	// }
 
 	// mapSkierToDaysToLiftID(statCache)
+	writeToDB()
 
 }
 
