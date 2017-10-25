@@ -64,12 +64,12 @@ func writeToDB() {
 	for trigger := <-receiveTrigger; trigger; trigger = <-receiveTrigger {
 		select {
 		case stat := <-statChan:
-			// tx := db.MustBegin()
-			_, err := db.NamedExec("INSERT INTO skier_stats (resort_id, day_num, skier_id, lift_id, time_stamp, verticals ) VALUES (:resort_id, :day_num, :skier_id, :lift_id, :time_stamp, :verticals)", stat)
+			tx := db.MustBegin()
+			_, err := tx.NamedExec("INSERT INTO skier_stats (resort_id, day_num, skier_id, lift_id, time_stamp, verticals ) VALUES (:resort_id, :day_num, :skier_id, :lift_id, :time_stamp, :verticals)", stat)
 			if err != nil {
 				log.Fatal(err)
 			}
-			// tx.Commit()
+			tx.Commit()
 		}
 	}
 	// fmt.Println("single threaded db write took", time.Since(start))

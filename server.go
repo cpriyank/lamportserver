@@ -21,7 +21,7 @@ func vertStats(ctx *fasthttp.RequestCtx) {
 // 	fmt.Fprintf(ctx, "Pong! %s\n", string(stats))
 // }
 
-var receiveTrigger = make(chan bool, 2*concurrency)
+var receiveTrigger = make(chan bool, numStats)
 
 // MultiParams is the multi params handler
 func loadStats(ctx *fasthttp.RequestCtx) {
@@ -45,9 +45,9 @@ func Serve() {
 	router.POST("/load/:resortID/:dayNum/:skierID/:liftID/:timeStamp", loadStats)
 	// router.POST("/load", QueryArgs)
 	// go writeUsingStatChan()
-	for i := 0; i < dbConnPoolSize; i++ {
-		go writeToDB()
-	}
+	// for i := 0; i < dbConnPoolSize; i++ {
+	go writeToDB()
+	// }
 
 	log.Fatal(fasthttp.ListenAndServe(":8000", router.Handler))
 }
