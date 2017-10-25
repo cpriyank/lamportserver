@@ -5,7 +5,6 @@ import (
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	"log"
-	"time"
 )
 
 const (
@@ -17,12 +16,12 @@ const (
 )
 
 type skierStat struct {
-	resortID  int `db:"resort_id"`
-	dayNum    int `db:"day_num"`
-	skierID   int `db:"skier_id"`
-	liftID    int `db:"lift_id"`
-	timeStamp int `db:"time_stamp"`
-	vertical  int `db:"verticals"`
+	ResortID  int `db:"resort_id"`
+	DayNum    int `db:"day_num"`
+	SkierID   int `db:"skier_id"`
+	LiftID    int `db:"lift_id"`
+	TimeStamp int `db:"time_stamp"`
+	Vertical  int `db:"verticals"`
 }
 
 var schema = `
@@ -35,7 +34,16 @@ var schema = `
 		verticals int
 	)`
 
-// func init() {
+func init() {
+	db, err := sqlx.Connect("postgres", postgresURL)
+	if err != nil {
+		log.Fatal(err)
+	}
+	db.Exec("DROP TABLE IF EXISTS skier_stats")
+	db.MustExec(schema)
+
+}
+
 var postgresURL = fmt.Sprintf("postgresql://%s:%s@%s:%d/%s?sslmode=disable", user, password, host, port, dbname)
 
 // fmt.Println("Successfully connected!")
@@ -46,18 +54,23 @@ func writeToDB() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	start := time.Now()
 	// err = db.Ping()
 	// if err != nil {
 	// 	panic(err)
 	// }
-	db.Exec("DROP TABLE IF EXISTS skier_stats")
-	db.MustExec(schema)
-
-	tx := db.MustBegin()
-	for _, stat := range statCache {
-		tx.NamedExec("INSERT INTO skier_stats (resort_id, day_num, skier_id, lift_id, time_stamp, verticals ) VALUES (:resort_id, :day_num, :skier_id, :lift_id, :time_stamp, :verticals)", stat)
+	// for stat := range statChan {
+	// 	tx.NamedExec("INSERT INTO skier_stats (resort_id, day_num, skier_id, lift_id, time_stamp, verticals ) VALUES (:resort_id, :day_num, :skier_id, :lift_id, :time_stamp, :verticals)", stat)
+	// }
+	for trigger := <-receiveTrigger; trigger; trigger = <-receiveTrigger {
+		select {
+		case stat := <-statChan:
+			// tx := db.MustBegin()
+			_, err := db.NamedExec("INSERT INTO skier_stats (resort_id, day_num, skier_id, lift_id, time_stamp, verticals ) VALUES (:resort_id, :day_num, :skier_id, :lift_id, :time_stamp, :verticals)", stat)
+			if err != nil {
+				log.Fatal(err)
+			}
+			// tx.Commit()
+		}
 	}
-	tx.Commit()
-	fmt.Println("single threaded db write took", time.Since(start))
+	// fmt.Println("single threaded db write took", time.Since(start))
 }
