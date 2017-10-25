@@ -8,9 +8,16 @@ import (
 	"os"
 )
 
+var getTrigger = make(chan bool, numStats)
+var resultsOfGet = make(chan string, numSkiers)
+
 // MultiParams is the multi params handler
 func vertStats(ctx *fasthttp.RequestCtx) {
-	fmt.Fprintf(ctx, "hi, %s, %s!\n", ctx.UserValue("skierID"), ctx.UserValue("dayNum"))
+	getTrigger <- true
+	skierID, dayNum := parseQuery(ctx)
+	verticals, lifts := queryDB(skierID, dayNum)
+	fmt.Fprintf(ctx, "%s%s", verticals, lifts)
+
 }
 
 // QueryArgs is used for uri query args test #11:
@@ -47,7 +54,6 @@ func Serve() {
 	// go writeUsingStatChan()
 	// for i := 0; i < dbConnPoolSize; i++ {
 	go writeToDB()
-	// }
 
 	log.Fatal(fasthttp.ListenAndServe(":8000", router.Handler))
 }

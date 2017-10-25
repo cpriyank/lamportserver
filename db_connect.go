@@ -49,6 +49,25 @@ var postgresURL = fmt.Sprintf("postgresql://%s:%s@%s:%d/%s?sslmode=disable", use
 // fmt.Println("Successfully connected!")
 // }
 
+func queryDB(skierID, dayNum int) (int, int) {
+	db, err := sqlx.Connect("postgres", postgresURL)
+	if err != nil {
+		log.Fatal(err)
+	}
+	var verticals, lifts int
+	for trigger := <-getTrigger; trigger; trigger = <-receiveTrigger {
+		err := db.Get(&verticals, "SELECT SUM(verticals) FROM skier_stats WHERE skier_id=$1 AND day_num=$2", skierID, dayNum)
+		if err != nil {
+			log.Fatal(err)
+		}
+		err = db.Get(&lifts, "SELECT COUNT(verticals) FROM skier_stats WHERE skier_id=$1 AND day_num=$2", skierID, dayNum)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	return verticals, lifts
+}
+
 func writeToDB() {
 	db, err := sqlx.Connect("postgres", postgresURL)
 	if err != nil {

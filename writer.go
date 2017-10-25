@@ -2,6 +2,7 @@ package lamportserver
 
 const (
 	numStats       = 800000
+	numSkiers      = 40000
 	concurrency    = 100
 	dbConnPoolSize = 50
 )

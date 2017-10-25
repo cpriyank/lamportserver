@@ -1,10 +1,14 @@
 package lamportserver
 
 import (
+	"fmt"
 	"github.com/valyala/fasthttp"
+	"os"
 	"strconv"
 )
 
+// TODO: A lot of code is repeated. Use json marshalling
+// and unmarshalling instead
 const (
 	maxInt = 1<<31 - 1
 )
@@ -21,6 +25,21 @@ func liftIDToVertical(liftID int) int {
 		return 500
 	}
 	return maxInt
+}
+
+func parseQuery(ctx *fasthttp.RequestCtx) (int, int) {
+	skierIDString := ctx.UserValue("skierID").(string)
+	skierID, err := strconv.Atoi(skierIDString)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%v", err)
+	}
+	dayNumString := ctx.UserValue("dayNum").(string)
+	dayNum, err := strconv.Atoi(dayNumString)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%v", err)
+	}
+	return skierID, dayNum
+
 }
 
 func parse(ctx *fasthttp.RequestCtx) (*skierStat, error) {
