@@ -5,17 +5,12 @@ import (
 	"github.com/wcharczuk/go-chart"
 )
 
-type LatencyStat struct {
-	Latency   float64
-	TimeStamp float64
-}
-
 func separateFields(stats []*LatencyStat) ([]float64, []float64) {
 	latencies := make([]float64, len(stats))
 	timestamps := make([]float64, len(stats))
 	for i := range stats {
 		latencies[i] = stats[i].Latency
-		timestamps[i] = stats[i].TimeStamp
+		timestamps[i] = float64(stats[i].TimeStamp)
 	}
 	return timestamps, latencies
 }
