@@ -20,14 +20,6 @@ func vertStats(ctx *fasthttp.RequestCtx) {
 
 }
 
-// QueryArgs is used for uri query args test #11:
-// if the req uri is /ping?name=foo, output: Pong! foo
-// if the req uri is /piNg?name=foo, redirect to /ping, output: Pong!
-// func QueryArgs(ctx *fasthttp.RequestCtx) {
-// 	name := ctx.QueryArgs().Peek("stats")
-// 	fmt.Fprintf(ctx, "Pong! %s\n", string(stats))
-// }
-
 var receiveTrigger = make(chan bool, numStats)
 
 // MultiParams is the multi params handler

@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	host     = "localhost"
-	port     = 5432
+	host     = "someurl"
+	port     = 5439
 	user     = "chiman"
 	password = "ramila"
 	dbname   = "db_test"

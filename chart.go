@@ -6,8 +6,8 @@ import (
 )
 
 type LatencyStat struct {
-	Latency
-	TimeStamp
+	Latency   float64
+	TimeStamp float64
 }
 
 func separateFields(stats []*LatencyStat) ([]float64, []float64) {
@@ -20,17 +20,18 @@ func separateFields(stats []*LatencyStat) ([]float64, []float64) {
 	return timestamps, latencies
 }
 
-func chartStat(stats []*latencyStat, nameToSave string) {
+func chartStat(stats []*LatencyStat, nameToSave string) error {
 
 	timestamps, latencies := separateFields(stats)
 	graph := chart.Chart{
 		Series: []chart.Series{
 			chart.ContinuousSeries{
-				XValues: timestaps,
+				XValues: timestamps,
 				YValues: latencies,
 			},
 		},
 	}
 	buffer := bytes.NewBuffer([]byte{})
 	err := graph.Render(chart.PNG, buffer)
+	return err
 }
