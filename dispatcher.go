@@ -2,7 +2,6 @@ package lamportserver
 
 const (
 	numStats       = 800000
-	numSkiers      = 40000
 	concurrency    = 100
 	dbConnPoolSize = 50
 )
@@ -10,19 +9,23 @@ const (
 // var statCache = make([]*skierStat, numStats)
 var statChan = make(chan *skierStat, numStats)
 
-// func writeUsingStatChan() {
-// 	start := time.Now()
-// 	for i := 0; i < numStats; i++ {
-// 		statCache[i] = <-statChan
-// 	}
-// 	// for i, stat := range statCache {
-// 	fmt.Println("took", time.Since(start))
-// 	// }
+func fanInLatencies() {
+	for {
+		select {
+		case responseStat := <-getResponseLogChan:
+			passLatencyToMQ(responseStat, "getCTX")
+		case responseStat := <-postResponseLogChan:
+			passLatencyToMQ(responseStat, "postCTX")
+		case responseStat := <-dbGETLatencyLogChan:
+			passLatencyToMQ(responseStat, "getDB")
+		case responseStat := <-dbPOSTLatencyLogChan:
+			passLatencyToMQ(responseStat, "postDB")
+		}
+	}
+}
 
-// 	// mapSkierToDaysToLiftID(statCache)
-// 	// writeToDB()
-
-// }
+func passLatencyToMQ(stat *LatencyStat, classification string) {
+}
 
 func (stat *skierStat) load() {
 	statChan <- stat
