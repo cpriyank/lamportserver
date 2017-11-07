@@ -5,6 +5,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	"log"
+	"time"
 )
 
 const (
@@ -83,12 +84,15 @@ func writeToDB() {
 	for trigger := <-receiveTrigger; trigger; trigger = <-receiveTrigger {
 		select {
 		case stat := <-statChan:
+			start := time.Now()
 			tx := db.MustBegin()
 			_, err := tx.NamedExec("INSERT INTO skier_stats (resort_id, day_num, skier_id, lift_id, time_stamp, verticals ) VALUES (:resort_id, :day_num, :skier_id, :lift_id, :time_stamp, :verticals)", stat)
 			if err != nil {
 				log.Fatal(err)
 			}
 			tx.Commit()
+			dbPOSTLatency := time.Since(start).Seconds()
+			dbPOSTLatencyLogChan <- &LatencyStat{dbPOSTLatency, time.Now().UnixNano()}
 		}
 	}
 	// fmt.Println("single threaded db write took", time.Since(start))
