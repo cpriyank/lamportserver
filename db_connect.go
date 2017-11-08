@@ -5,13 +5,14 @@ import (
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	"log"
+	"sync/atomic"
 	"time"
 )
 
 const (
-	host     = "someurl"
-	port     = 5439
-	user     = "chiman"
+	host     = "localhost"
+	port     = 5432
+	user     = "postgres"
 	password = "ramila"
 	dbname   = "db_test"
 )
@@ -92,6 +93,7 @@ func writeToDB() {
 			}
 			tx.Commit()
 			dbPOSTLatency := time.Since(start).Seconds()
+			atomic.AddUint64(&dbPOSTCounter, 1)
 			dbPOSTLatencyLogChan <- &LatencyStat{dbPOSTLatency, time.Now().UnixNano()}
 		}
 	}
