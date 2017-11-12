@@ -53,7 +53,6 @@ func vertStats(ctx *fasthttp.RequestCtx) {
 	atomic.AddUint64(&dbGETCounter, 1)
 	dbGETLatencyLogChan <- &LatencyStat{dbGetLatency, time.Now().UnixNano()}
 	fmt.Fprintf(ctx, "%s%s", verticals, lifts)
-
 }
 
 // MultiParams is the multi params handler

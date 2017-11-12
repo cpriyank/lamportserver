@@ -13,7 +13,6 @@ func separateFields(stats []*LatencyStat) ([]float64, []float64) {
 	for i := range stats {
 		latencies[i] = stats[i].Latency
 		timestamps[i] = float64(stats[i].TimeStamp)
-		fmt.Println(latencies[i], timestamps[i])
 	}
 	return timestamps, latencies
 }
@@ -23,8 +22,29 @@ func chartStat(stats []*LatencyStat, nameToSave string) error {
 
 	timestamps, latencies := separateFields(stats)
 	graph := chart.Chart{
+		XAxis: chart.XAxis{
+			Name:      "Time stamps",
+			NameStyle: chart.StyleShow(),
+			Style:     chart.StyleShow(),
+		},
+		YAxis: chart.YAxis{
+			Name:      "latencies",
+			NameStyle: chart.StyleShow(),
+			Style:     chart.StyleShow(),
+			ValueFormatter: func(v interface{}) string {
+				if vf, isFloat := v.(float64); isFloat {
+					return fmt.Sprintf("%0.8f", vf)
+				}
+				return ""
+			},
+		},
 		Series: []chart.Series{
 			chart.ContinuousSeries{
+				Style: chart.Style{
+					Show:        true,
+					StrokeColor: chart.GetDefaultColor(0).WithAlpha(64),
+					FillColor:   chart.GetDefaultColor(0).WithAlpha(64),
+				},
 				XValues: timestamps,
 				YValues: latencies,
 			},

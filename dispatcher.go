@@ -15,9 +15,9 @@ const (
 // var statCache = make([]*skierStat, numStats)
 var statChan = make(chan *skierStat, numStats)
 var getResponseLatencies = make([]*LatencyStat, numSkiers)
-var postResponseLatencies = make([]*LatencyStat, numStats)
-var dbWriteLatencies = make([]*LatencyStat, numStats)
-var dbReadLatencies = make([]*LatencyStat, numSkiers)
+var postResponseLatencies []*LatencyStat
+var dbWriteLatencies []*LatencyStat
+var dbReadLatencies []*LatencyStat
 
 func fanInLatencies() {
 	for {
@@ -40,7 +40,7 @@ func closeChans() {
 		close(dbGETLatencyLogChan)
 		close(getResponseLogChan)
 	}
-	if postCounter == numSkiers {
+	if dbPOSTCounter == numStats {
 		close(receiveTrigger)
 		close(dbPOSTLatencyLogChan)
 		close(postResponseLogChan)
@@ -57,7 +57,7 @@ func passLatencyToMQ(stat *LatencyStat, classification string) {
 		}
 	case "postCTX":
 		postResponseLatencies = append(postResponseLatencies, stat)
-		if len(postResponseLatencies) == numStats {
+		if len(postResponseLatencies) == 740000 {
 			fileName := fmt.Sprintf("post-%d.PNG", time.Now().UnixNano())
 			chartStat(postResponseLatencies, fileName)
 		}
