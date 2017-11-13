@@ -36,7 +36,6 @@ func fanInLatencies() {
 
 func closeChans() {
 	if getCounter == numSkiers {
-		close(getTrigger)
 		close(dbGETLatencyLogChan)
 		close(getResponseLogChan)
 	}
@@ -51,25 +50,25 @@ func passLatencyToMQ(stat *LatencyStat, classification string) {
 	switch classification {
 	case "getCTX":
 		getResponseLatencies = append(getResponseLatencies, stat)
-		if len(getResponseLatencies) == numSkiers {
+		if len(getResponseLatencies) == 2600 {
 			fileName := fmt.Sprintf("get-%d.PNG", time.Now().UnixNano())
 			chartStat(getResponseLatencies, fileName)
 		}
 	case "postCTX":
 		postResponseLatencies = append(postResponseLatencies, stat)
-		if len(postResponseLatencies) == 740000 {
+		if len(postResponseLatencies) == 57000 {
 			fileName := fmt.Sprintf("post-%d.PNG", time.Now().UnixNano())
 			chartStat(postResponseLatencies, fileName)
 		}
 	case "getDB":
 		dbReadLatencies = append(dbReadLatencies, stat)
-		if len(dbReadLatencies) == numSkiers {
+		if len(dbReadLatencies) == 2600 {
 			fileName := fmt.Sprintf("dbread-%d.PNG", time.Now().UnixNano())
 			chartStat(dbReadLatencies, fileName)
 		}
 	case "postDB":
 		dbWriteLatencies = append(dbWriteLatencies, stat)
-		if len(dbWriteLatencies) == numStats {
+		if len(dbWriteLatencies) == 57000 {
 			fileName := fmt.Sprintf("dbwrite-%d.PNG", time.Now().UnixNano())
 			chartStat(dbWriteLatencies, fileName)
 		}

@@ -41,6 +41,7 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	db.SetMaxOpenConns(104)
 	db.Exec("DROP TABLE IF EXISTS skier_stats")
 	db.MustExec(schema)
 
@@ -56,17 +57,18 @@ func queryDB(skierID, dayNum int) (int, int) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer db.Close()
 	var verticals, lifts int
-	for trigger := <-getTrigger; trigger; trigger = <-receiveTrigger {
-		err := db.Get(&verticals, "SELECT SUM(verticals) FROM skier_stats WHERE skier_id=$1 AND day_num=$2", skierID, dayNum)
-		if err != nil {
-			log.Fatal(err)
-		}
-		err = db.Get(&lifts, "SELECT COUNT(verticals) FROM skier_stats WHERE skier_id=$1 AND day_num=$2", skierID, dayNum)
-		if err != nil {
-			log.Fatal(err)
-		}
+	// for trigger := <-getTrigger; trigger; trigger = <-getTrigger {
+	err = db.Get(&verticals, "SELECT SUM(verticals) FROM skier_stats WHERE skier_id=$1 AND day_num=$2", skierID, dayNum)
+	if err != nil {
+		log.Fatal(err)
 	}
+	err = db.Get(&lifts, "SELECT COUNT(verticals) FROM skier_stats WHERE skier_id=$1 AND day_num=$2", skierID, dayNum)
+	if err != nil {
+		log.Fatal(err)
+	}
+	// }
 	return verticals, lifts
 }
 
@@ -75,6 +77,7 @@ func writeToDB() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer db.Close()
 	// err = db.Ping()
 	// if err != nil {
 	// 	panic(err)
@@ -94,6 +97,26 @@ func writeToDB() {
 			tx.Commit()
 			dbPOSTLatency := time.Since(start).Seconds()
 			atomic.AddUint64(&dbPOSTCounter, 1)
+			switch dbPOSTCounter {
+			case 10000:
+				fmt.Println("10k")
+			case 58000:
+				fmt.Println("58k")
+			case 200000:
+				fmt.Println("200k")
+			case 300000:
+				fmt.Println("300k")
+			case 400000:
+				fmt.Println("400k")
+			case 500000:
+				fmt.Println("500k")
+			case 600000:
+				fmt.Println("600k")
+			case 700000:
+				fmt.Println("700k")
+			case 800000:
+				fmt.Println("800k")
+			}
 			dbPOSTLatencyLogChan <- &LatencyStat{dbPOSTLatency, time.Now().UnixNano()}
 		}
 	}

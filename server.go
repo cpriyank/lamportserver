@@ -10,7 +10,6 @@ import (
 	"time"
 )
 
-var getTrigger = make(chan bool, numStats)
 var getResponseLogChan = make(chan *LatencyStat, numStats)
 var postResponseLogChan = make(chan *LatencyStat, numStats)
 var dbGETLatencyLogChan = make(chan *LatencyStat, numStats)
@@ -44,7 +43,6 @@ func logHandlers(h fasthttp.RequestHandler, endpoint string) fasthttp.RequestHan
 
 // MultiParams is the multi params handler
 func vertStats(ctx *fasthttp.RequestCtx) {
-	getTrigger <- true
 	atomic.AddUint64(&getCounter, 1)
 	skierID, dayNum := parseQuery(ctx)
 	start := time.Now()
