@@ -15,10 +15,10 @@ var postResponseLogChan = make(chan *LatencyStat, numStats)
 var dbGETLatencyLogChan = make(chan *LatencyStat, numStats)
 var dbPOSTLatencyLogChan = make(chan *LatencyStat, numStats)
 var receiveTrigger = make(chan bool, numStats)
-var postCounter uint64 = 0
-var getCounter uint64 = 0
-var dbGETCounter uint64 = 0
-var dbPOSTCounter uint64 = 0
+var postCounter uint64 
+var getCounter uint64
+var dbGETCounter uint64
+var dbPOSTCounter uint64
 
 type LatencyStat struct {
 	Latency   float64
@@ -50,7 +50,7 @@ func vertStats(ctx *fasthttp.RequestCtx) {
 	dbGetLatency := time.Since(start).Seconds()
 	atomic.AddUint64(&dbGETCounter, 1)
 	dbGETLatencyLogChan <- &LatencyStat{dbGetLatency, time.Now().UnixNano()}
-	fmt.Fprintf(ctx, "%s%s", verticals, lifts)
+	fmt.Fprintf(ctx, "%d%d", verticals, lifts)
 }
 
 // MultiParams is the multi params handler

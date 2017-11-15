@@ -13,6 +13,7 @@ func separateFields(stats []*LatencyStat) ([]float64, []float64) {
 	for i := range stats {
 		latencies[i] = stats[i].Latency
 		timestamps[i] = float64(stats[i].TimeStamp)
+		fmt.Println(latencies[i], timestamps[i])
 	}
 	return timestamps, latencies
 }
