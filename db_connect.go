@@ -11,10 +11,10 @@ import (
 
 const (
 	host     = "localhost"
-	port     = 5432
-	user     = "postgres"
+	port     = 5439
+	user     = "chiman"
 	password = "ramila"
-	dbname   = "db_test"
+	dbname   = "postgres"
 )
 
 type skierStat struct {
@@ -97,26 +97,7 @@ func writeToDB() {
 			tx.Commit()
 			dbPOSTLatency := time.Since(start).Seconds()
 			atomic.AddUint64(&dbPOSTCounter, 1)
-			switch dbPOSTCounter {
-			case 10000:
-				fmt.Println("10k")
-			case 58000:
-				fmt.Println("58k")
-			case 200000:
-				fmt.Println("200k")
-			case 300000:
-				fmt.Println("300k")
-			case 400000:
-				fmt.Println("400k")
-			case 500000:
-				fmt.Println("500k")
-			case 600000:
-				fmt.Println("600k")
-			case 700000:
-				fmt.Println("700k")
-			case 800000:
-				fmt.Println("800k")
-			}
+			fmt.Println("apya", dbPOSTCounter)
 			dbPOSTLatencyLogChan <- &LatencyStat{dbPOSTLatency, time.Now().UnixNano()}
 		}
 	}
