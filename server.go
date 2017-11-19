@@ -25,6 +25,11 @@ type LatencyStat struct {
 	TimeStamp int64
 }
 
+// Index is the index handler
+func Index(ctx *fasthttp.RequestCtx) {
+	fmt.Fprint(ctx, "Welcome!\n")
+}
+
 // A middleware which logs response time of a request handler given
 func logHandlers(h fasthttp.RequestHandler, endpoint string) fasthttp.RequestHandler {
 	return fasthttp.RequestHandler(func(ctx *fasthttp.RequestCtx) {
@@ -72,6 +77,7 @@ func loadStats(ctx *fasthttp.RequestCtx) {
 
 func Serve() {
 	router := fasthttprouter.New()
+	router.GET("/", Index)
 	router.GET("/myvert/:skierID/:dayNum", logHandlers(vertStats, "GET"))
 	router.POST("/load/:resortID/:dayNum/:skierID/:liftID/:timeStamp", logHandlers(loadStats, "POST"))
 
